@@ -1,3 +1,3 @@
-#version 120
+#include "/header.glsl"
 #define VERTEX
 #include "/program/post/bloomBlur.glsl"

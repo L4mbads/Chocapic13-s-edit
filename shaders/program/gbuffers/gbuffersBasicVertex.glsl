@@ -1,6 +1,4 @@
 #extension GL_EXT_gpu_shader4 : enable
-#include "/lib/resParams.glsl"
-
 
 /*
 !! DO NOT REMOVE !!
@@ -9,9 +7,9 @@ Read the terms of modification and sharing before changing something below pleas
 !! DO NOT REMOVE !!
 */
 
-out vec4 lmtexcoord;
-out vec4 color;
-out vec4 normalMat;
+varying vec4 lmtexcoord;
+varying vec4 color;
+varying vec4 normalMat;
 
 #ifdef MC_NORMAL_MAP
 	out vec4 tangent;
@@ -20,14 +18,10 @@ out vec4 normalMat;
 
 uniform vec2 texelSize;
 uniform int framemod8;
-const vec2[8] offsets = vec2[8](vec2(1./8.,-3./8.),
-									vec2(-1.,3.)/8.,
-									vec2(5.0,1.)/8.,
-									vec2(-3,-5.)/8.,
-									vec2(-5.,5.)/8.,
-									vec2(-7.,-1.)/8.,
-									vec2(3,7.)/8.,
-									vec2(7.,-7.)/8.);
+
+#include "/lib/resParams.glsl"
+
+
 //////////////////////////////VOID MAIN//////////////////////////////
 //////////////////////////////VOID MAIN//////////////////////////////
 //////////////////////////////VOID MAIN//////////////////////////////

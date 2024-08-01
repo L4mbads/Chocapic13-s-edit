@@ -1,2 +1,2 @@
-#version 330 compatibility
+#include "/header.glsl"
 #include "/program/gbuffers/gbuffersBasicFragment.glsl"

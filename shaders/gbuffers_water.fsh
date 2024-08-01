@@ -1,3 +1,3 @@
-#version 330 compatibility
+#include "/header.glsl"
 #define FRAGMENT
 #include "/program/gbuffers/gbuffersWater.glsl"

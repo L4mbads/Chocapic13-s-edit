@@ -1,3 +1,3 @@
-#version 120
+#include "/header.glsl"
 #define FRAGMENT
 #include "/program/post/bloomUpsample.glsl"

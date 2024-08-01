@@ -249,14 +249,7 @@ vec3 tonemap(vec3 col){
 vec3 invTonemap(vec3 col){
 	return col/(1-luma(col));
 }
-const vec2[8] offsets = vec2[8](vec2(1./8.,-3./8.),
-							vec2(-1.,3.)/8.,
-							vec2(5.0,1.)/8.,
-							vec2(-3,-5.)/8.,
-							vec2(-5.,5.)/8.,
-							vec2(-7.,-1.)/8.,
-							vec2(3,7.)/8.,
-							vec2(7.,-7.)/8.);
+
 vec3 TAA_hq(){
 	#ifdef TAA_UPSCALING
 	vec2 adjTC = clamp(texcoord*RENDER_SCALE, vec2(0.0),RENDER_SCALE-texelSize*2.);

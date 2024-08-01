@@ -24,11 +24,7 @@ uniform float rainStrength;
 #include "/lib/util.glsl"
 #include "/lib/projections.glsl"
 #include "/lib/shadow.glsl"
-//faster and actually more precise than pow 2.2
-vec3 toLinear(vec3 sRGB){
-	return sRGB * (sRGB * (sRGB * 0.305306011 + 0.682171111) + 0.012522878);
-}
-
+#include "/lib/colorTransforms.glsl"
 
 float interleaved_gradientNoise(float temporal){
 	vec2 coord = gl_FragCoord.xy;
@@ -61,14 +57,6 @@ vec2 tapLocation(int sampleNumber, float spinAngle,int nb, float nbRot)
 }
 uniform int framemod8;
 uniform int framecouter;
-		const vec2[8] offsets = vec2[8](vec2(1./8.,-3./8.),
-									vec2(-1.,3.)/8.,
-									vec2(5.0,1.)/8.,
-									vec2(-3,-5.)/8.,
-									vec2(-5.,5.)/8.,
-									vec2(-7.,-1.)/8.,
-									vec2(3,7.)/8.,
-									vec2(7.,-7.)/8.);
 
 
 //////////////////////////////VOID MAIN//////////////////////////////

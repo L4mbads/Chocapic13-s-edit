@@ -1,4 +1,4 @@
-#version 120
+#include "/header.glsl"
 //6 Horizontal gaussian blurs and horizontal downsampling
 #define FRAGMENT
 #define BLOOM_BLUR_PASS 1
