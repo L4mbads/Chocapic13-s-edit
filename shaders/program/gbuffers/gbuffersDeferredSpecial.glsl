@@ -1,25 +1,13 @@
-#extension GL_EXT_gpu_shader4 : enable
-
-
-
-in vec4 lmtexcoord;
-in vec4 color;
-in vec4 normalMat;
+varying vec4 lmtexcoord;
+varying vec4 color;
+varying vec4 normalMat;
 
 uniform sampler2D texture;
 
-//faster and actually more precise than pow 2.2
-vec3 toLinear(vec3 sRGB){
-	return sRGB * (sRGB * (sRGB * 0.305306011 + 0.682171111) + 0.012522878);
-}
+#include "/lib/colorTransforms.glsl"
 
 
-//////////////////////////////VOID MAIN//////////////////////////////
-//////////////////////////////VOID MAIN//////////////////////////////
-//////////////////////////////VOID MAIN//////////////////////////////
-//////////////////////////////VOID MAIN//////////////////////////////
-//////////////////////////////VOID MAIN//////////////////////////////
-/* DRAWBUFFERS:2 */
+/* RENDERTARGETS:2 */
 void main() {
 	vec3 albedo = toLinear(texture2D(texture, lmtexcoord.xy).rgb*color.rgb);
 	

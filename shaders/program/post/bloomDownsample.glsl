@@ -1,7 +1,7 @@
-#include "/lib/resParams.glsl"
-uniform float viewWidth;
-uniform float viewHeight;
-uniform vec2 texelSize;
+
+
+
+
 
 varying vec2 resScale;
 

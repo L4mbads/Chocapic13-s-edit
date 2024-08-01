@@ -1,5 +1,3 @@
-#extension GL_EXT_gpu_shader4 : enable
-
 /*
 !! DO NOT REMOVE !!
 This code is from Chocapic13' shaders
@@ -12,21 +10,9 @@ varying vec4 color;
 varying vec4 normalMat;
 
 #ifdef MC_NORMAL_MAP
-	out vec4 tangent;
+	varying vec4 tangent;
 	attribute vec4 at_tangent;
 #endif
-
-uniform vec2 texelSize;
-uniform int framemod8;
-
-#include "/lib/resParams.glsl"
-
-
-//////////////////////////////VOID MAIN//////////////////////////////
-//////////////////////////////VOID MAIN//////////////////////////////
-//////////////////////////////VOID MAIN//////////////////////////////
-//////////////////////////////VOID MAIN//////////////////////////////
-//////////////////////////////VOID MAIN//////////////////////////////
 
 void main() {
 	gl_Position = ftransform();

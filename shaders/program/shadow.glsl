@@ -1,5 +1,5 @@
 
-#extension GL_EXT_gpu_shader4 : enable
+
 /*
 !! DO NOT REMOVE !!
 This code is from Chocapic13' shaders
@@ -19,7 +19,6 @@ varying vec2 texcoord;
 
 
 #define SHADOW_MAP_BIAS 0.8
-const float PI = 3.1415927;
 
 uniform mat4 shadowProjectionInverse;
 uniform mat4 shadowProjection;
@@ -29,7 +28,7 @@ uniform mat4 gbufferModelView;
 uniform mat4 gbufferModelViewInverse;
 uniform mat4 gbufferProjection;
 uniform vec3 cameraPosition;
-uniform float frameTimeCounter;
+
 uniform vec3 sunVec;
 uniform float aspectRatio;
 uniform float sunElevation;
@@ -39,7 +38,7 @@ uniform vec3 shadowViewDir;
 uniform vec3 shadowCamera;
 uniform vec3 shadowLightVec;
 uniform float shadowMaxProj;
-uniform vec2 texelSize;
+
 attribute vec4 mc_Entity;
 attribute vec4 mc_midTexCoord;
 

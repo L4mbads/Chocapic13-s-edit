@@ -1,4 +1,4 @@
-#extension GL_EXT_gpu_shader4 : enable
+
 
 #if defined VERTEX
 
@@ -12,7 +12,7 @@
 #define CLOUDY_FOG_AMOUNT 1.0 //[0.0 0.2 0.4 0.6 0.8 1.0 1.25 1.5 1.75 2.0 3.0 4.0 5.0]
 #define FOG_TOD_MULTIPLIER 1.0 //[0.0 0.2 0.4 0.6 0.8 1.0 1.25 1.5 1.75 2.0 3.0 4.0 5.0] //Influence of time of day on fog amount
 #define FOG_RAIN_MULTIPLIER 1.0 //[0.0 0.2 0.4 0.6 0.8 1.0 1.25 1.5 1.75 2.0 3.0 4.0 5.0] //Influence of rain on fog amount
-#include "/lib/resParams.glsl"
+
 flat varying vec3 ambientUp;
 flat varying vec3 ambientLeft;
 flat varying vec3 ambientRight;
@@ -43,7 +43,7 @@ uniform sampler2D depthtex0;
 
 uniform mat4 gbufferModelViewInverse;
 uniform vec3 sunPosition;
-uniform vec2 texelSize;
+
 uniform float rainStrength;
 uniform float sunElevation;
 uniform float nightVision;
@@ -51,14 +51,14 @@ uniform float near;
 uniform float far;
 uniform float frameTime;
 uniform float eyeAltitude;
-uniform int frameCounter;
+
 uniform int worldTime;
 vec3 sunVec = normalize(mat3(gbufferModelViewInverse) *sunPosition);
 
 
 
 #include "/lib/skyGradient.glsl"
-#include "/lib/util.glsl"
+
 #include "/lib/ROBOBOSky.glsl"
 vec3 rodSample(vec2 Xi)
 {
@@ -298,12 +298,12 @@ uniform sampler2D colortex4;
 uniform sampler2D noisetex;
 uniform sampler2DShadow shadow;
 
-uniform int frameCounter;
+
 uniform float rainStrength;
 uniform float eyeAltitude;
 uniform vec3 sunVec;
-uniform vec2 texelSize;
-uniform float frameTimeCounter;
+
+
 uniform mat4 gbufferProjection;
 uniform mat4 gbufferProjectionInverse;
 uniform mat4 gbufferPreviousProjection;
@@ -317,7 +317,7 @@ uniform float far;
 uniform ivec2 eyeBrightnessSmooth;
 
 #include "/lib/shadow.glsl"
-#include "/lib/util.glsl"
+
 #include "/lib/ROBOBOSky.glsl"
 #include "/lib/skyGradient.glsl"
 #include "/lib/volumetricClouds.glsl"

@@ -1,4 +1,4 @@
-#extension GL_EXT_gpu_shader4 : enable
+
 
 #if defined VERTEX
 
@@ -11,9 +11,9 @@ flat varying float tempOffsets;
 
 
 uniform sampler2D colortex4;
-uniform int frameCounter;
-#include "/lib/util.glsl"
-#include "/lib/resParams.glsl"
+
+
+
 void main() {
 	tempOffsets = HaltonSeq2(frameCounter%10000);
 	gl_Position = ftransform();
@@ -44,11 +44,11 @@ uniform sampler2D noisetex;
 uniform sampler2D colortex4;
 
 uniform vec3 sunVec;
-uniform vec2 texelSize;
-uniform float frameTimeCounter;
+
+
 uniform float rainStrength;
-uniform int frameCounter;
-uniform int framemod8;
+
+
 uniform mat4 gbufferProjectionInverse;
 uniform mat4 gbufferModelViewInverse;
 uniform vec3 cameraPosition;
@@ -61,9 +61,9 @@ vec3 toScreenSpace(vec3 p) {
 }
 
 #include "/lib/skyGradient.glsl"
-#include "/lib/util.glsl"
+
 #include "/lib/volumetricClouds.glsl"
-#include "/lib/resParams.glsl"
+
 
 float blueNoise(){
   return fract(texelFetch2D(noisetex, ivec2(gl_FragCoord.xy)%512, 0).a + 1.0/1.6180339887 * frameCounter);

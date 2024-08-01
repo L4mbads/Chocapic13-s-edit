@@ -1,9 +1,3 @@
-#extension GL_EXT_gpu_shader4 : enable
-
-#if defined VERTEX
-
-#define TAA
-
 flat varying vec3 WsunVec;
 flat varying vec3 ambientUp;
 flat varying vec3 ambientLeft;
@@ -17,6 +11,10 @@ flat varying vec2 TAA_Offset;
 flat varying vec3 zMults;
 flat varying vec3 refractedSunVec;
 
+#if defined VERTEX
+
+
+
 uniform sampler2D colortex4;
 
 uniform float far;
@@ -24,10 +22,10 @@ uniform float near;
 uniform mat4 gbufferModelViewInverse;
 uniform vec3 sunPosition;
 uniform float sunElevation;
-uniform int frameCounter;
 
-#include "/lib/util.glsl"
-#include "/lib/resParams.glsl"
+
+
+
 void main() {
 	gl_Position = ftransform();
 	#ifdef TAA_UPSCALING
@@ -78,79 +76,38 @@ void main() {
 
 const bool shadowHardwareFiltering = true;
 
-flat varying vec4 lightCol; //main light source color (rgb),used light source(1=sun,-1=moon)
-flat varying vec3 ambientUp;
-flat varying vec3 ambientLeft;
-flat varying vec3 ambientRight;
-flat varying vec3 ambientB;
-flat varying vec3 ambientF;
-flat varying vec3 ambientDown;
-flat varying vec3 WsunVec;
-flat varying vec2 TAA_Offset;
-flat varying float tempOffsets;
-flat varying vec3 refractedSunVec;
-
 uniform sampler2D colortex0;//clouds
 uniform sampler2D colortex1;//albedo(rgb),material(alpha) RGBA16
 uniform sampler2D colortex4;//Skybox
 uniform sampler2D colortex3;
 uniform sampler2D colortex5;
 uniform sampler2D colortex7;
-uniform sampler2D colortex6; // Noise
 uniform sampler2D depthtex1;//depth
 uniform sampler2D depthtex0;//depth
-uniform sampler2D noisetex;//depth
 uniform sampler2DShadow shadow;
 
 uniform int heldBlockLightValue;
-uniform int frameCounter;
+
 uniform int isEyeInWater;
 uniform float far;
 uniform float wetness;
 uniform float near;
-uniform float frameTimeCounter;
+
 uniform float rainStrength;
-uniform mat4 gbufferProjection;
-uniform mat4 gbufferProjectionInverse;
-uniform mat4 gbufferModelViewInverse;
-uniform mat4 gbufferPreviousModelView;
-uniform mat4 gbufferPreviousProjection;
-uniform vec3 previousCameraPosition;
-uniform mat4 shadowModelView;
-uniform mat4 shadowProjection;
-uniform mat4 gbufferModelView;
-uniform float viewWidth;
-uniform float viewHeight;
+
+
 uniform float aspectRatio;
-uniform vec2 texelSize;
-uniform vec3 cameraPosition;
+
 uniform vec3 sunVec;
 uniform ivec2 eyeBrightnessSmooth;
 
-#define diagonal3(m) vec3((m)[0].x, (m)[1].y, m[2].z)
-#define  projMAD(m, v) (diagonal3(m) * (v) + (m)[3].xyz)
-vec3 toScreenSpace(vec3 p) {
-	vec4 iProjDiag = vec4(gbufferProjectionInverse[0].x, gbufferProjectionInverse[1].y, gbufferProjectionInverse[2].zw);
-    vec3 p3 = p * 2. - 1.;
-    vec4 fragposition = iProjDiag * p3.xyzz + gbufferProjectionInverse[3];
-    return fragposition.xyz / fragposition.w;
-}
-vec3 toScreenSpacePrev(vec3 p) {
-	vec4 iProjDiag = vec4(gbufferProjectionInverse[0].x, gbufferProjectionInverse[1].y, gbufferProjectionInverse[2].zw);
-    vec3 p3 = p * 2. - 1.;
-    vec4 fragposition = iProjDiag * p3.xyzz + gbufferProjectionInverse[3];
-    return fragposition.xyz / fragposition.w;
-}
-//espen's encoding
-vec3 worldToView(vec3 worldPos) {
-    vec4 pos = vec4(worldPos, 0.0);
-    pos = gbufferModelView * pos;
-    return pos.xyz;
-}
-#include "/lib/resParams.glsl"
+
+#include "/lib/projections.glsl"
 #include "/lib/waterOptions.glsl"
+#include "/lib/material.glsl"
 #include "/lib/shadow.glsl"
 #include "/lib/colorTransforms.glsl"
+#include "/lib/colorDither.glsl"
 #include "/lib/skyGradient.glsl"
 #include "/lib/stars.glsl"
 #include "/lib/volumetricClouds.glsl"
@@ -161,54 +118,10 @@ float ld(float dist) {
 vec3 normVec (vec3 vec){
 	return vec*inversesqrt(dot(vec,vec));
 }
-float lengthVec (vec3 vec){
-	return sqrt(dot(vec,vec));
-}
-#define fsign(a)  (clamp((a)*1e35,0.,1.)*2.-1.)
-float triangularize(float dither)
-{
-    float center = dither*2.0-1.0;
-    dither = center*inversesqrt(abs(center));
-    return clamp(dither-fsign(center),0.0,1.0);
-}
-float interleaved_gradientNoise(float temp){
-	return fract(52.9829189*fract(0.06711056*gl_FragCoord.x + 0.00583715*gl_FragCoord.y)+temp);
-}
-vec3 fp10Dither(vec3 color,float dither){
-	const vec3 mantissaBits = vec3(6.,6.,5.);
-	vec3 exponent = floor(log2(color));
-	return color + dither*exp2(-mantissaBits)*exp2(exponent);
-}
 
 
-
-float facos(float sx){
-    float x = clamp(abs( sx ),0.,1.);
-    return sqrt( 1. - x ) * ( -0.16882 * x + 1.56734 );
-}
-//espens encoding
-vec3 decode (vec2 encn)
-{
-    vec3 n = vec3(0.0);
-    encn = encn * 2.0 - 1.0;
-    n.xy = abs(encn);
-    n.z = 1.0 - n.x - n.y;
-    n.xy = n.z <= 0.0 ? (1.0 - n.yx) * sign(encn) : encn;
-    return normalize(n.xyz);
-}
-
-vec2 decodeVec2(float a){
-    const vec2 constant1 = 65535. / vec2( 256., 65536.);
-    const float constant2 = 256. / 255.;
-    return fract( a * constant1 ) * constant2 ;
-}
 float linZ(float depth) {
     return (2.0 * near) / (far + near - depth * (far - near));
-	// l = (2*n)/(f+n-d(f-n))
-	// f+n-d(f-n) = 2n/l
-	// -d(f-n) = ((2n/l)-f-n)
-	// d = -((2n/l)-f-n)/(f-n)
-
 }
 
 float rayTraceShadow(vec3 dir,vec3 position,float dither){
@@ -221,16 +134,9 @@ float rayTraceShadow(vec3 dir,vec3 position,float dither){
     vec3 direction = toClipSpace3(position+dir*rayLength)-clipPosition;  //convert to clip space
     direction.xyz = direction.xyz/max(abs(direction.x)/texelSize.x,abs(direction.y)/texelSize.y);	//fixed step size
 
-
-
-
     vec3 stepv = direction *3. * clamp(MC_RENDER_QUALITY,1.,2.0)*vec3(RENDER_SCALE,1.0);
 
 	vec3 spos = clipPosition*vec3(RENDER_SCALE,1.0)+vec3(TAA_Offset*vec2(texelSize.x,texelSize.y)*0.5,0.0)+stepv*dither;
-
-
-
-
 
 	for (int i = 0; i < int(quality); i++) {
 		spos += stepv;
@@ -242,11 +148,9 @@ float rayTraceShadow(vec3 dir,vec3 position,float dither){
 
 			if (dist < 0.01 ) return 0.0;
 
-
-
+		}
 	}
 
-	}
     return 1.0;
 }
 
@@ -257,7 +161,7 @@ float rayTraceShadow(vec3 dir,vec3 position,float dither){
 
 vec2 tapLocation(int sampleNumber,int nb, float nbRot,float jitter,float distort)
 {
-		float alpha0 = sampleNumber/nb;
+	float alpha0 = sampleNumber/nb;
     float alpha = (sampleNumber+jitter)/nb;
     float angle = jitter*6.28 + alpha * 84.0 * 6.28;
 
@@ -276,23 +180,8 @@ vec3 BilateralFiltering(sampler2D tex, sampler2D depth,vec2 coord,float frDepth,
 
   return vec3(sampled.x,sampled.yz/sampled.w);
 }
-float blueNoise(){
-  return fract(texelFetch2D(noisetex, ivec2(gl_FragCoord.xy)%512, 0).a + 1.0/1.6180339887 * frameCounter);
-}
-vec4 blueNoise(vec2 coord){
-  return texelFetch2D(colortex6, ivec2(coord)%512, 0);
-}
-float R2_dither(){
-	vec2 alpha = vec2(0.75487765, 0.56984026);
-	return fract(alpha.x * gl_FragCoord.x + alpha.y * gl_FragCoord.y + 1.0/1.6180339887 * frameCounter);
-}
-vec3 toShadowSpaceProjected(vec3 p3){
-    p3 = mat3(gbufferModelViewInverse) * p3 + gbufferModelViewInverse[3].xyz;
-    p3 = mat3(shadowModelView) * p3 + shadowModelView[3].xyz;
-    p3 = diagonal3(shadowProjection) * p3 + shadowProjection[3].xyz;
 
-    return p3;
-}
+
 
 float waterCaustics(vec3 wPos, vec3 lightSource){
 	vec2 pos = (wPos.xz - lightSource.xz/lightSource.y*wPos.y)*4.0 ;
@@ -388,10 +277,7 @@ vec3 RT(vec3 dir,vec3 position,float noise, vec3 N){
 	}
 	return vec3(1.1);
 }
-vec2 R2_samples(int n){
-	vec2 alpha = vec2(0.75487765, 0.56984026);
-	return fract(alpha * n);
-}
+
 
 vec3 cosineHemisphereSample(vec2 Xi)
 {
@@ -530,7 +416,7 @@ void main() {
 		}
 		color += skyFromTex(np3,colortex4)/150. + toLinear(texture2D(colortex1,texcoord).rgb)/10.*4.0*ffstep(0.985,-dot(lightCol.a*WsunVec,np3));
 		color = color*cloud.a+cloud.rgb;
-		gl_FragData[0].rgb = clamp(fp10Dither(color*8./3.,triangularize(noise)),0.0,65000.);
+		gl_FragData[0].rgb = clamp(fp10Dither(color*8./3., texcoord),0.0,65000.);
 		//if (gl_FragData[0].r > 65000.) 	gl_FragData[0].rgb = vec3(0.0);
 		vec4 trpData = texture2D(colortex7,texcoord);
 		bool iswater = texture2D(colortex7,texcoord).a > 0.99;

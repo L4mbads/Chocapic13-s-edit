@@ -1,8 +1,8 @@
-#extension GL_EXT_gpu_shader4 : enable
+
 
 #if defined VERTEX
 
-uniform vec2 texelSize;
+
 void main() {
 	gl_Position = ftransform();
 	vec2 scaleRatio = max(vec2(0.25), vec2(18.+258*2,258.)*texelSize);

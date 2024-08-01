@@ -1,4 +1,4 @@
-#extension GL_EXT_gpu_shader4 : enable
+
 
 varying vec2 texcoord;
 
@@ -22,17 +22,13 @@ varying vec2 texcoord;
 	uniform sampler2D colortex7;
 	uniform sampler2D colortex8;
 	uniform sampler2D colortex4;
-	uniform vec2 texelSize;
-	uniform float viewWidth;
-	uniform float viewHeight;
-	uniform float frameTimeCounter;
-	uniform int frameCounter;
+	
 	uniform int isEyeInWater;
 	uniform int hideGUI;
 	
 	#include "/lib/colorTransforms.glsl"
 	#include "/lib/colorDither.glsl"
-	#include "/lib/resParams.glsl"
+	
 	#include "/lib/texFiltering.glsl"
 	
 	

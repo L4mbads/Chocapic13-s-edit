@@ -1,3 +1,5 @@
+#include "/lib/projections.glsl"
+
 float square(float x){
   return x*x;
 }
@@ -54,10 +56,8 @@ vec3 GGX (vec3 n, vec3 v, vec3 l, float r, vec3 F0) {
 
   return dotNL * D * F / (dotLH*dotLH*(1.0-k2)+k2);
 }
-vec3 toClipSpace3(vec3 viewSpacePosition) {
-    return projMAD(gbufferProjection, viewSpacePosition) / -viewSpacePosition.z * 0.5 + 0.5;
-}
-uniform sampler2D gaux1; // you'll need this
+
+
 vec3 rayTrace(vec3 dir,vec3 position,float noise, float fresnel){
     float quality = 15;
 

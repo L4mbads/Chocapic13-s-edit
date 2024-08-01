@@ -1,4 +1,4 @@
-#extension GL_EXT_gpu_shader4 : enable
+
 
 #if defined VERTEX
 
@@ -8,12 +8,12 @@ flat varying vec3 WsunVec;
 
 uniform sampler2D colortex4;
 
-uniform int frameCounter;
+
 uniform float sunElevation;
 uniform vec3 sunPosition;
 uniform mat4 gbufferModelViewInverse;
-#include "/lib/util.glsl"
-#include "/lib/resParams.glsl"
+
+
 
 void main() {
 	TAA_Offset = offsets[frameCounter%8];
@@ -44,10 +44,10 @@ uniform sampler2D colortex1;
 uniform sampler2D shadow;
 uniform sampler2D noisetex;
 uniform vec3 sunVec;
-uniform vec2 texelSize;
-uniform float frameTimeCounter;
+
+
 uniform float rainStrength;
-uniform int frameCounter;
+
 uniform mat4 gbufferProjection;
 uniform mat4 gbufferProjectionInverse;
 //espens encoding
@@ -57,13 +57,13 @@ uniform mat4 gbufferModelViewInverse;
 uniform mat4 shadowModelView;
 uniform mat4 shadowProjection;
 uniform vec3 cameraPosition;
-uniform float viewWidth;
+
 uniform float aspectRatio;
-uniform float viewHeight;
+
 uniform float far;
 uniform float near;
 
-#include "/lib/resParams.glsl"
+
 #include "/lib/shadow.glsl"
 
 #define ffstep(x,y) clamp((y - x) * 1e35,0.0,1.0)

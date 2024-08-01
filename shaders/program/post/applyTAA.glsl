@@ -1,4 +1,4 @@
-#extension GL_EXT_gpu_shader4 : enable
+
 
 //TAA OPTIONS
 //#define NO_CLIP	//Removes all anti-ghosting techniques used and creates a sharp image (good for still screenshots)
@@ -19,8 +19,8 @@ flat varying float tempOffsets;
 #if defined VERTEX
 
 uniform sampler2D colortex4;
-uniform int frameCounter;
-#include "/lib/util.glsl"
+
+
 void main() {
 
 	tempOffsets = HaltonSeq2(frameCounter%10000);
@@ -31,7 +31,7 @@ void main() {
 
 #elif defined FRAGMENT
 
-#include "/lib/resParams.glsl"
+
 
 
 
@@ -67,15 +67,10 @@ uniform sampler2D colortex0;
 uniform sampler2D colortex6;
 uniform sampler2D depthtex0;
 
-uniform vec2 texelSize;
-uniform float frameTimeCounter;
-uniform float viewHeight;
-uniform float viewWidth;
-uniform int frameCounter;
-uniform int framemod8;
-uniform vec3 previousCameraPosition;
-uniform mat4 gbufferPreviousModelView;
-#define fsign(a)  (clamp((a)*1e35,0.,1.)*2.-1.)
+
+
+
+
 #include "/lib/projections.glsl"
 
 

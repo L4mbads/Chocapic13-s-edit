@@ -1,10 +1,8 @@
-#extension GL_EXT_gpu_shader4 : enable
-
 #define PCF
 
-in vec4 lmtexcoord;
-in vec4 color;
-in vec4 normalMat;
+varying vec4 lmtexcoord;
+varying vec4 color;
+varying vec4 normalMat;
 
 
 uniform sampler2D texture;
@@ -14,57 +12,26 @@ uniform float lightSign;
 uniform vec3 sunVec;
 uniform vec3 upVec;
 
-uniform vec2 texelSize;
+
 uniform float skyIntensityNight;
 uniform float skyIntensity;
 uniform float sunElevation;
 uniform float rainStrength;
 
-#include "/lib/resParams.glsl"
-#include "/lib/util.glsl"
 #include "/lib/projections.glsl"
 #include "/lib/shadow.glsl"
 #include "/lib/colorTransforms.glsl"
-
-float interleaved_gradientNoise(float temporal){
-	vec2 coord = gl_FragCoord.xy;
-	float noise = fract(52.9829189*fract(0.06711056*coord.x + 0.00583715*coord.y)+temporal);
-	return noise;
-}
+#include "/lib/colorDither.glsl"
 
 #ifdef PCF
-const vec2 shadowOffsets[4] = vec2[4](vec2( 0.1250,  0.0000 ),
-vec2( -0.1768, -0.1768 ),
-vec2( -0.0000,  0.3750 ),
-vec2(  0.3536, -0.3536 )
-);
+	const vec2 shadowOffsets[4] = vec2[4](vec2( 0.1250,  0.0000 ),
+	vec2( -0.1768, -0.1768 ),
+	vec2( -0.0000,  0.3750 ),
+	vec2(  0.3536, -0.3536 )
+	);
 #endif
 
-
-vec2 tapLocation(int sampleNumber, float spinAngle,int nb, float nbRot)
-{
-	float startJitter = (spinAngle/6.28);
-    float alpha = sqrt(sampleNumber + startJitter/nb );
-    float angle = alpha * (nbRot * 6.28) + spinAngle*2.;
-
-    float ssR = alpha;
-    float sin_v, cos_v;
-
-	sin_v = sin(angle);
-	cos_v = cos(angle);
-
-    return vec2(cos_v, sin_v)*ssR;
-}
-uniform int framemod8;
-uniform int framecouter;
-
-
-//////////////////////////////VOID MAIN//////////////////////////////
-//////////////////////////////VOID MAIN//////////////////////////////
-//////////////////////////////VOID MAIN//////////////////////////////
-//////////////////////////////VOID MAIN//////////////////////////////
-//////////////////////////////VOID MAIN//////////////////////////////
-/* DRAWBUFFERS:2 */
+/* RENDERTARGETS:2 */
 void main() {
 
 	gl_FragData[0] = texture2D(texture, lmtexcoord.xy)*color;
