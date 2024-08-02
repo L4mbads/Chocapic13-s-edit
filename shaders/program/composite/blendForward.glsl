@@ -21,11 +21,7 @@ flat varying vec3 zMults;
   uniform sampler2D colortex2;
   uniform sampler2D colortex0;
   uniform sampler2D noisetex;
-  
-  
-  
-  uniform float far;
-  uniform float near;
+
   uniform int isEyeInWater;
 
   #include "/lib/waterOptions.glsl"
@@ -92,7 +88,7 @@ flat varying vec3 zMults;
   	return caustic / weightSum;
   }
 
-  /* DRAWBUFFERS:73 */
+  /* RENDERTARGETS:7,3 */
 
   void main() {
     vec2 texcoord = gl_FragCoord.xy*texelSize;

@@ -34,9 +34,7 @@ vec3 GGX2(vec3 n, vec3 v, vec3 l, float r, vec3 F0) {
 
   return dotNL * F * (G * D / (4 * dotNV * dotNL + 1e-7));
 }
-float invLinZ (float lindepth){
-	return -((2.0*near/lindepth)-far-near)/(far-near);
-}
+
 
 vec3 GGX (vec3 n, vec3 v, vec3 l, float r, vec3 F0) {
   r*=r;r*=r;
@@ -88,7 +86,7 @@ vec3 rayTrace(vec3 dir,vec3 position,float noise, float fresnel){
         spos += stepv;
 
         //small bias
-        minZ = maxZ * 0.000000000015/ld(spos.z);
+        minZ = maxZ * 0.000000000015/linZ(spos.z);
         maxZ += stepv.z;
     }
   return vec3(1.1);

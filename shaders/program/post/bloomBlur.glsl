@@ -1,14 +1,8 @@
-
-
-
-
 varying vec2 texcoord;
 varying vec2 resScale;
 
 #if defined VERTEX
 
-
-	
 	void main() {
 		vec2 clampedRes = max(vec2(viewWidth,viewHeight),vec2(1920.0,1080.0))/BLOOM_QUALITY;
 		gl_Position = ftransform();
@@ -23,35 +17,40 @@ varying vec2 resScale;
 
 #elif defined FRAGMENT
 	
-	
 	uniform sampler2D colortex6;
-	
 	
 	vec3 gauss1D(vec2 coord,vec2 dir,float alpha,int maxIT){
 		vec4 tot = vec4(0.);
-		
+		float minTC = 0.;
 		#if BLOOM_BLUR_PASS == 1
+
 			float maxTC = 0.25*resScale.x;
+
 		#elif BLOOM_BLUR_PASS == 2
+
 			float maxTC = 0.25*resScale.y;
+
 		#endif
 
-		float minTC = 0.;
 		for (int i = -maxIT;i<maxIT+1;i++){
 			float weight = exp(-i*i*alpha*4.0);
 			//here we take advantage of bilinear filtering for 2x less sample, as a side effect the gaussian won't be totally centered for small blurs
 			vec2 spCoord = coord+dir*texelSize*(2.0*i+0.5);
 			
 			#if BLOOM_BLUR_PASS == 1
+
 				tot += vec4(texture2D(colortex6,spCoord).rgb,1.0)*weight*float(spCoord.x > minTC && spCoord.x < maxTC);
+			
 			#elif BLOOM_BLUR_PASS == 2
+				
 				tot += vec4(texture2D(colortex6,spCoord).rgb,1.0)*weight*float(spCoord.y > minTC && spCoord.y < maxTC);
+			
 			#endif
 		}
 		return  tot.rgb/max(1.0,tot.a);
 	}
 	
-	/* DRAWBUFFERS:6 */
+	/* RENDERTARGETS:6 */
 	
 	void main() {
 	

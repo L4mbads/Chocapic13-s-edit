@@ -85,19 +85,14 @@ flat varying vec3 refractedSunVec;
 	
 	uniform sampler2D depthtex0;
 	uniform sampler2DShadow shadow;
-	
-	
 	uniform sampler2D colortex2;
 	uniform sampler2D colortex3;
 	uniform sampler2D colortex4;
 	
 	uniform vec3 sunVec;
-	uniform float far;
-	
 	uniform float rainStrength;
 	uniform float sunElevation;
 	uniform ivec2 eyeBrightnessSmooth;
-	
 	uniform int isEyeInWater;
 	
 	#include "/lib/waterOptions.glsl"

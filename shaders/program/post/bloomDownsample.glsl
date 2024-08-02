@@ -1,8 +1,3 @@
-
-
-
-
-
 varying vec2 resScale;
 
 #if defined VERTEX
@@ -27,13 +22,13 @@ varying vec2 resScale;
 	
 	#if DOWNSAMPLE_PASS == 1
 	
-		/* DRAWBUFFERS:3 */
+		/* RENDERTARGETS:3 */
 		uniform sampler2D colortex5;
 		#define SAMPLER colortex5
 	
 	#else
 	
-		/* DRAWBUFFERS:6 */
+		/* RENDERTARGETS:6 */
 		uniform sampler2D colortex3;
 		#define SAMPLER colortex3
 	

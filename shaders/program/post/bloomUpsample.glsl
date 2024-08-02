@@ -1,9 +1,3 @@
-
-
-
-
-
-
 varying vec2 resScale;
 
 #if defined VERTEX
@@ -29,22 +23,22 @@ varying vec2 resScale;
 	
 	#include "/lib/texFiltering.glsl"
 
-	/* DRAWBUFFERS:3 */
+	/* RENDERTARGETS:3 */
 	void main() {
-
-	vec2 texcoord = ((gl_FragCoord.xy)*2.+0.5)*texelSize;
 	
-	vec3 bloom = texture2D_bicubic(colortex3,texcoord/  2.0).rgb	//1/4 res
-			   + texture2D_bicubic(colortex6,texcoord/  4.0).rgb    //1/8 res
-			   + texture2D_bicubic(colortex6,texcoord/  8.0 + vec2(0.25     * resScale.x + 	2.5*texelSize.x, .0)).rgb  //1/16 res
-			   + texture2D_bicubic(colortex6,texcoord/ 16.0 + vec2(0.375    * resScale.x + 	4.5*texelSize.x, .0)).rgb  //1/32 res
-			   + texture2D_bicubic(colortex6,texcoord/ 32.0 + vec2(0.4375   * resScale.x + 	6.5*texelSize.x, .0)).rgb  //1/64 res
-			   + texture2D_bicubic(colortex6,texcoord/ 64.0 + vec2(0.46875  * resScale.x +  8.5*texelSize.x, .0)).rgb  //1/128 res
-			   + texture2D_bicubic(colortex6,texcoord/128.0 + vec2(0.484375 * resScale.x + 10.5*texelSize.x, .0)).rgb; //1/256 res
-	
-	gl_FragData[0].rgb = bloom;
-	
-	gl_FragData[0].rgb = clamp(gl_FragData[0].rgb,0.0,65000.);
+		vec2 texcoord = ((gl_FragCoord.xy)*2.+0.5)*texelSize;
+		
+		vec3 bloom = texture2D_bicubic(colortex3,texcoord/  2.0).rgb	//1/4 res
+				   + texture2D_bicubic(colortex6,texcoord/  4.0).rgb    //1/8 res
+				   + texture2D_bicubic(colortex6,texcoord/  8.0 + vec2(0.25     * resScale.x + 	2.5*texelSize.x, .0)).rgb  //1/16 res
+				   + texture2D_bicubic(colortex6,texcoord/ 16.0 + vec2(0.375    * resScale.x + 	4.5*texelSize.x, .0)).rgb  //1/32 res
+				   + texture2D_bicubic(colortex6,texcoord/ 32.0 + vec2(0.4375   * resScale.x + 	6.5*texelSize.x, .0)).rgb  //1/64 res
+				   + texture2D_bicubic(colortex6,texcoord/ 64.0 + vec2(0.46875  * resScale.x +  8.5*texelSize.x, .0)).rgb  //1/128 res
+				   + texture2D_bicubic(colortex6,texcoord/128.0 + vec2(0.484375 * resScale.x + 10.5*texelSize.x, .0)).rgb; //1/256 res
+		
+		gl_FragData[0].rgb = bloom;
+		
+		gl_FragData[0].rgb = clamp(gl_FragData[0].rgb,0.0,65000.);
 	}
 	
 #endif

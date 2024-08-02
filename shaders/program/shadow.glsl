@@ -1,5 +1,3 @@
-
-
 /*
 !! DO NOT REMOVE !!
 This code is from Chocapic13' shaders
@@ -7,30 +5,23 @@ Read the terms of modification and sharing before changing something below pleas
 !! DO NOT REMOVE !!
 */
 
-varying vec2 texcoord;
-
-#ifdef VERTEX
-
-
 //#define SHADOW_FRUSTRUM_CULLING   // If enabled, removes most of the blocks during shadow rendering that would not cast shadows on the player field of view. Improves performance but can be sometimes incorrect and causes flickering shadows on distant occluders
 #define WAVY_PLANTS
 #define WAVY_STRENGTH 1.0 //[0.1 0.25 0.5 0.75 1.0 1.25 1.5 1.75 2.0]
 #define WAVY_SPEED 1.0 //[0.001 0.01 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 1.0 1.25 1.5 2.0 3.0 4.0]
-
-
 #define SHADOW_MAP_BIAS 0.8
+//#define SHADOW_DISABLE_ALPHA_MIPMAPS // Disables mipmaps on the transparency of alpha-tested things like foliage, may cost a few fps in some cases
+//#define Stochastic_Transparent_Shadows // Highly recommanded to enable SHADOW_DISABLE_ALPHA_MIPMAPS with it. Uses noise to simulate transparent objects' shadows (not colored). It is also recommended to increase Min_Shadow_Filter_Radius with this.
 
-uniform mat4 shadowProjectionInverse;
-uniform mat4 shadowProjection;
-uniform mat4 shadowModelViewInverse;
-uniform mat4 shadowModelView;
-uniform mat4 gbufferModelView;
-uniform mat4 gbufferModelViewInverse;
-uniform mat4 gbufferProjection;
-uniform vec3 cameraPosition;
+
+#define SHADOW_PASS
+
+
+varying vec2 texcoord;
+
+#ifdef VERTEX
 
 uniform vec3 sunVec;
-uniform float aspectRatio;
 uniform float sunElevation;
 uniform float lightSign;
 uniform float cosFov;
@@ -42,7 +33,9 @@ uniform float shadowMaxProj;
 attribute vec4 mc_Entity;
 attribute vec4 mc_midTexCoord;
 
+
 #include "/lib/shadow.glsl"
+#include "/lib/projections.glsl"
 
 const float PI48 = 150.796447372*WAVY_SPEED;
 float pi2wt = PI48*frameTimeCounter;
@@ -92,11 +85,7 @@ bool intersectCone(float coneHalfAngle, vec3 coneTip , vec3 coneAxis, vec3 rayOr
 
   return true;
 }
-#define diagonal3(m) vec3((m)[0].x, (m)[1].y, m[2].z)
-#define  projMAD(m, v) (diagonal3(m) * (v) + (m)[3].xyz)
-vec4 toClipSpace3(vec3 viewSpacePosition) {
-    return vec4(projMAD(gl_ProjectionMatrix, viewSpacePosition),1.0);
-}
+
 void main() {
 
 	vec3 position = mat3(gl_ModelViewMatrix) * vec3(gl_Vertex) + gl_ModelViewMatrix[3].xyz;
@@ -118,7 +107,7 @@ void main() {
       position = mat3(shadowModelView) * worldpos + shadowModelView[3].xyz ;
     }
   #endif
-	gl_Position = BiasShadowProjection(toClipSpace3(position));
+	gl_Position = BiasShadowProjection(toClipSpace4(position));
 	gl_Position.z /= 6.0;
 
 	texcoord.xy = gl_MultiTexCoord0.xy;
@@ -131,30 +120,24 @@ void main() {
 }
 
 #else if defined FRAGMENT
+    
+    #extension GL_ARB_shader_texture_lod : enable
+    
+    uniform sampler2D tex;
 
-#extension GL_ARB_shader_texture_lod : enable
+    #include "/lib/colorDither.glsl"
+    
+    
+    void main() {
+        gl_FragData[0] = texture2D(tex,texcoord.xy);
 
-//#define SHADOW_DISABLE_ALPHA_MIPMAPS // Disables mipmaps on the transparency of alpha-tested things like foliage, may cost a few fps in some cases
-//#define Stochastic_Transparent_Shadows // Highly recommanded to enable SHADOW_DISABLE_ALPHA_MIPMAPS with it. Uses noise to simulate transparent objects' shadows (not colored). It is also recommended to increase Min_Shadow_Filter_Radius with this.
+    	#ifdef SHADOW_DISABLE_ALPHA_MIPMAPS
+    	   gl_FragData[0].a = texture2DLod(tex,texcoord.xy,0).a;
+    	#endif
 
-uniform sampler2D tex;
-uniform sampler2D noisetex;
-//////////////////////////////VOID MAIN//////////////////////////////
-//////////////////////////////VOID MAIN//////////////////////////////
-//////////////////////////////VOID MAIN//////////////////////////////
-//////////////////////////////VOID MAIN//////////////////////////////
-//////////////////////////////VOID MAIN//////////////////////////////
-float blueNoise(){
-  return texelFetch2D(noisetex, ivec2(gl_FragCoord.xy)%512, 0).a;
-}
-void main() {
-	gl_FragData[0] = texture2D(tex,texcoord.xy);
-	#ifdef SHADOW_DISABLE_ALPHA_MIPMAPS
-	 gl_FragData[0].a = texture2DLod(tex,texcoord.xy,0).a;
-	#endif
-  #ifdef Stochastic_Transparent_Shadows
-	 gl_FragData[0].a = float(gl_FragData[0].a >= blueNoise());
-  #endif
-}
-
+        #ifdef Stochastic_Transparent_Shadows
+    	   gl_FragData[0].a = float(gl_FragData[0].a >= blueNoise());
+        #endif
+    }
+    
 #endif

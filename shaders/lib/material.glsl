@@ -22,15 +22,15 @@ vec3 decode (vec2 encn)
 //espens normals encoding end
 
 #ifdef MC_NORMAL_MAP
-vec3 applyBump(mat3 tbnMatrix, vec3 bump)
-{
-
-		float bumpmult = 1.0-wetness*0.50;
-
-		bump = bump * vec3(bumpmult, bumpmult, bumpmult) + vec3(0.0f, 0.0f, 1.0f - bumpmult);
-
-		return normalize(bump*tbnMatrix);
-}
+	vec3 applyBump(mat3 tbnMatrix, vec3 bump)
+	{
+	
+			float bumpmult = 1.0-wetness*0.50;
+	
+			bump = bump * vec3(bumpmult, bumpmult, bumpmult) + vec3(0.0f, 0.0f, 1.0f - bumpmult);
+	
+			return normalize(bump*tbnMatrix);
+	}
 #endif
 
 //encoding by jodie

@@ -80,8 +80,6 @@ flat varying vec2 TAA_Offset;
 	
 #elif defined FRAGMENT
 	
-	
-	
 	uniform sampler2D texture;
 	uniform sampler2D specular;
 	uniform sampler2DShadow shadow;
@@ -92,11 +90,8 @@ flat varying vec2 TAA_Offset;
 	
 	uniform vec4 lightCol;
 	uniform vec3 sunVec;
-	
 	uniform float waveScale;
 	uniform float lightSign;
-	uniform float near;
-	uniform float far;
 	uniform float moonIntensity;
 	uniform float sunIntensity;
 	uniform vec3 sunColor;
@@ -104,16 +99,12 @@ flat varying vec2 TAA_Offset;
 	uniform vec3 upVec;
 	uniform float sunElevation;
 	uniform float fogAmount;
-	
 	uniform float rainStrength;
 	uniform float skyIntensityNight;
 	uniform float skyIntensity;
-	
-	
-	
-	
 	uniform int isEyeInWater;
 	uniform sampler2D colortex4;
+
 	#include "/lib/shadow.glsl"
 	#include "/lib/colorTransforms.glsl"
 	#include "/lib/colorDither.glsl"
@@ -121,13 +112,9 @@ flat varying vec2 TAA_Offset;
 	#include "/lib/skyGradient.glsl"
 	#include "/lib/waterBump.glsl"
 	#include "/lib/clouds.glsl"
-	
 	#include "/lib/stars.glsl"
-	
-	float ld(float dist) {
-	    return (2.0 * near) / (far + near - dist * (far - near));
-	}
 	#include "/lib/specular.glsl"
+
 	vec3 rayTraceWater(vec3 dir,vec3 position,float dither, float fresnel){
 	
 	    float quality = mix(15,SSR_STEPS,fresnel);
@@ -169,7 +156,7 @@ flat varying vec2 TAA_Offset;
 	        spos += stepv;
 				#endif
 			//small bias
-			minZ = maxZ-0.00004/ld(spos.z);
+			minZ = maxZ-0.00004/linZ(spos.z);
 			maxZ += stepv.z;
 	    }
 	

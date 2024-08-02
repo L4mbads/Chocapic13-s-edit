@@ -5,7 +5,7 @@
 		gl_Position.w = -1.0;
 	}
 
-#else if defined FRAGMENT
+#elif defined FRAGMENT
 	
 	
 	/* RENDERTARGETS:3 */
